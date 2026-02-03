@@ -30,5 +30,9 @@ The Streamlit application in `app.py` allows users to interactively explore the 
 - `vehicles_us.csv`: Original dataset of US vehicle advertisements.  
 - `notebooks/EDA.ipynb`: Exploratory Data Analysis notebook using Plotly Express.  
 - `app.py`: Streamlit application code.  
-- `requirements.txt`: Project dependencies pinned to specific versions.  
+- `requirements.txt`: Project dependencies with minimum version specifications to support a range of Python environments.  
 - `.streamlit/config.toml`: Streamlit configuration for deployment (headless mode, port settings).  
+
+# Repo Url: github.com/aurascoper/Sprint4.git
+
+
