@@ -33,6 +33,6 @@ The Streamlit application in `app.py` allows users to interactively explore the 
 - `requirements.txt`: Project dependencies with minimum version specifications to support a range of Python environments.  
 - `.streamlit/config.toml`: Streamlit configuration for deployment (headless mode, port settings).  
 
-## Repo Url: github.com/aurascoper/Sprint4.git
+Repo Url: github.com/aurascoper/Sprint4.git
 
-## Render Url: https://sprint4-s6ej.onrender.com/
+Render Url: https://sprint4-s6ej.onrender.com/
