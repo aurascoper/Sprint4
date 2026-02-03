@@ -1,54 +1,45 @@
-import pandas as pd
-import scipy.stats
 import streamlit as st
-import time
+import io
+import pandas as pd
+import plotly.express as px
 
-# these are stateful variables which are preserved as Streamlit reruns this script
-if 'experiment_no' not in st.session_state:
-    st.session_state['experiment_no'] = 0
+st.header("Vehicle Dataset Dashboard")
 
-if 'df_experiment_results' not in st.session_state:
-    st.session_state['df_experiment_results'] = pd.DataFrame(columns=['no', 'iterations', 'mean'])
+# Load the dataset
+df = pd.read_csv("vehicles_us.csv")
 
-st.header('Tossing a Coin')
+if st.checkbox("Show raw data"):
+    st.subheader("Raw Dataset")
+    st.dataframe(df)
 
-# Initialize the chart with 0.5 to set a centered starting point
-chart = st.line_chart([0.5])
+st.subheader("Dataset Info")
+buf = io.StringIO()
+df.info(buf=buf)
+s = buf.getvalue()
+st.text(s)
 
-def toss_coin(n):
-    # Generating bernoulli trials (0 or 1)
-    trial_outcomes = scipy.stats.bernoulli.rvs(p=0.5, size=n)
+st.subheader("Price Distribution Histogram")
+price_hist = px.histogram(df, x="price", nbins=50, title="Distribution of Vehicle Prices")
+st.plotly_chart(price_hist)
 
-    outcome_no = 0
-    outcome_1_count = 0
+st.subheader("Year Distribution Histogram")
+year_hist = px.histogram(df, x="model_year", nbins=30, title="Distribution of Vehicle Model Years")
+st.plotly_chart(year_hist)
 
-    for r in trial_outcomes:
-        outcome_no += 1
-        if r == 1:
-            outcome_1_count += 1
-        
-        current_mean = outcome_1_count / outcome_no
-        chart.add_rows([current_mean])
-        time.sleep(0.05)
+# Scatter plot: Price vs Mileage with filter
+filter_newer = st.checkbox("Filter: Vehicles from 2015 onwards")
+if filter_newer:
+    df_filtered = df[df["model_year"] >= 2015]
+else:
+    df_filtered = df
 
-    return current_mean
-
-number_of_trials = st.slider('Number of trials?', 1, 1000, 10)
-start_button = st.button('Run')
-
-if start_button:
-    st.write(f'Running the experiment of {number_of_trials} trials.')
-    st.session_state['experiment_no'] += 1
-    mean = toss_coin(number_of_trials)
-    st.session_state['df_experiment_results'] = pd.concat([
-        st.session_state['df_experiment_results'],
-        pd.DataFrame(data=[[st.session_state['experiment_no'],
-                            number_of_trials,
-                            mean]],
-                     columns=['no', 'iterations', 'mean'])
-        ],
-        axis=0)
-    st.session_state['df_experiment_results'] = \
-        st.session_state['df_experiment_results'].reset_index(drop=True)
-
-st.write(st.session_state['df_experiment_results'])
+st.subheader("Price vs. Mileage Scatter Plot")
+scatter_pm = px.scatter(
+    df_filtered,
+    x="odometer",
+    y="price",
+    color="model_year",
+    title="Price vs Mileage Scatter",
+    hover_data=["model", "fuel"]
+)
+st.plotly_chart(scatter_pm)
